@@ -6,8 +6,24 @@
   <body class="container">
     <button id="complimentButton">Get a compliment</button>
 
+
+    <button id="fortuneButton">Get a Fortune</button>
+    
+    <button class="btn btn-hero" id="colorFlipperBtn">Change the Background Color</button>
+
+    <br>
+    <input type="text" id="postaJoke" placeholder="Post your favorite joke!">
+    <button id="jokeBtn">Submit</button>
+    <br>
+
+    <h2>Joke List</h2>
+    <h5>Click on a Joke to remove it</h5>
+    <ul id="jokeList"></ul>
+
+
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
+
       document.getElementById("complimentButton").onclick = function () {
         axios.get("http://localhost:4000/api/compliment/")
             .then(function (response) {
@@ -15,62 +31,52 @@
               alert(data);
             });
       };
-    </script>
 
-    <button id="fortuneButton">Get a Fortune</button>
-    <script>
       document.getElementById("fortuneButton").onclick = function () {
-        axios.get("http://localhost:4000/api/fortune").then(function (response) {
+        axios.get("http://localhost:4000/api/fortune/").then(function (response) {
           const data = response.data;
           alert(data);
         })
       }
-    </script>
 
-    <div>
-      <button class="btn btn-hero" id="colorFlipperBtn">Change the Background Color</button>
-      <script>
-        document.getElementById("colorFlipperBtn").onclick = function () {
-          axios.get("http://localhost:4000/api/prettyColors").then(function (response) {
+      document.getElementById("colorFlipperBtn").onclick = function () {
+          axios.get("http://localhost:4000/api/prettyColors/").then(function (response) {
             const colorChange = response.data
             document.body.style.backgroundColor = colorChange
           })
         }
 
-      </script>
-    </div>
+        const jokeInput = document.getElementById('postaJoke')
+        const jokeBtn = document.getElementById('jokeBtn')
+        const jokeList = document.getElementById('jokeList')
 
-
-    <!-- <section>
-      <h4>Counter</h4>
-
-      <button class="counterBtn plus" id="plus">+</button>
-      <h1 id="numberValue">0</h1>
-      <button class="counterBtn minus" id="minus">-</button>
-      <script>
-        const counter = () => {
-          const buttons = document.querySelectorAll(".counterBtn")
-          let count = 0
-
-          buttons.forEach(function(button){
-            button.addEventListener('click', function(){
-              if (button.classList.contains('plus')){
-                count++
-              } else if (botton.classList.contains('minus')){
-                count--
-              }
-
-              return document.querySelector('#numberValue') = count
+        jokeBtn.onclick = () => {
+          let body = {
+            joke: jokeInput.value
+          }
+          axios.post("http://localhost:4000/api/postaJoke/", body)
+            .then((res) => {
+              let element = document.createElement('li');
+              element.textContent = res.data.joke;
+              element.classList.add(res.data.id + '');
+              element.addEventListener('click', removeJoke)
+              jokeList.appendChild(element);
             })
+          jokeInput.value = '';
+        }
+
+        const removeJoke = (e) => {
+          let id = e.target.classList[0];
+          console.log(id);
+          axios.delete("http://localhost:4000/api/postaJoke/" + id, {data: {id: id}}).then((res) => {
+            let toBeDeleted = document.getElementsByClassName(e.target.classList[0]);
+            while (toBeDeleted[0]) {
+              toBeDeleted[0].parentNode.removeChild(toBeDeleted[0]);
+            }
+            e.target.parentNode.removeChild(e.target)
           })
         }
 
-      </script>
-    </section> -->
-
-    <div>
-      <input type="text" id="postaJoke">
-    </div>
-  
+    </script>
   </body>
 </html>

@@ -58,4 +58,32 @@ app.get("/api/prettyColors", (req, res) => {
 })
 
 
+const jokeList = []
+let id = 1
+
+app.post("/api/postaJoke", (req, res) => {
+  const {joke} = req.body;
+  const newJoke = {
+    id,
+    joke
+  }
+
+  jokeList.push(newJoke);
+
+  id++;
+  res.status(200).send(newJoke)
+})
+
+app.get('/api/postaJoke', (req, res) => {
+  res.status(200).send(jokeList)
+})
+
+app.delete("/api/postaJoke/:id", (req, res) => {
+  for (let i = 0 ; i < jokeList.length; i++) {
+    jokeList[i].joke = req.body.replace;
+  }
+  res.status(204).send('Error. No Item found');
+})
+
+
 app.listen(4000, () => console.log("Server running on 4000"));
